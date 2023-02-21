@@ -1,8 +1,11 @@
-const { expect } = require("chai"); 
+// uses waffle testing framework, and chai assertion library
+//super similar to mockito, or jasmine
+const { expect } = require("chai");
 
 const toWei = (num) => ethers.utils.parseEther(num.toString())
 const fromWei = (num) => ethers.utils.formatEther(num)
 
+// anonymous callback function
 describe("NFTMarketplace", function () {
 
   let NFT;
@@ -18,8 +21,11 @@ describe("NFTMarketplace", function () {
 
   beforeEach(async function () {
     // Get the ContractFactories and Signers here.
+
     NFT = await ethers.getContractFactory("NFT");
     Marketplace = await ethers.getContractFactory("Marketplace");
+
+    // signers are abstractions of etherum accounts which sign and send eth network transactions
     [deployer, addr1, addr2, ...addrs] = await ethers.getSigners();
 
     // To deploy our contracts
@@ -27,18 +33,20 @@ describe("NFTMarketplace", function () {
     marketplace = await Marketplace.deploy(feePercent);
   });
 
+  // test that all contracts deployed successfully
+
   describe("Deployment", function () {
 
-    it("Should track name and symbol of the nft collection", async function () {
+    it("Should track name and symbol of the nft collection contract", async function () {
       // This test expects the owner variable stored in the contract to be equal
       // to our Signer's owner.
-      const nftName = "DApp NFT"
-      const nftSymbol = "DAPP"
+      const nftName = "MusicMinty NFT"
+      const nftSymbol = "MNTY"
       expect(await nft.name()).to.equal(nftName);
       expect(await nft.symbol()).to.equal(nftSymbol);
     });
 
-    it("Should track feeAccount and feePercent of the marketplace", async function () {
+    it("Should track feeAccount and feePercent of the marketplace contract", async function () {
       expect(await marketplace.feeAccount()).to.equal(deployer.address);
       expect(await marketplace.feePercent()).to.equal(feePercent);
     });
@@ -79,6 +87,8 @@ describe("NFTMarketplace", function () {
           1,
           nft.address,
           1,
+          // wei is the smallest subdivision of ether, basically a penny
+          // ether = 1 * 10^18 wei
           toWei(price),
           addr1.address
         )
@@ -102,6 +112,7 @@ describe("NFTMarketplace", function () {
     });
 
   });
+
   describe("Purchasing marketplace items", function () {
     let price = 2
     let fee = (feePercent/100)*price
@@ -114,6 +125,7 @@ describe("NFTMarketplace", function () {
       // addr1 makes their nft a marketplace item.
       await marketplace.connect(addr1).makeItem(nft.address, 1 , toWei(price))
     })
+
     it("Should update item as sold, pay seller, transfer NFT to buyer, charge fees and emit a Bought event", async function () {
       const sellerInitalEthBal = await addr1.getBalance()
       const feeAccountInitialEthBal = await deployer.getBalance()
@@ -141,6 +153,7 @@ describe("NFTMarketplace", function () {
       // The buyer should now own the nft
       expect(await nft.ownerOf(1)).to.equal(addr2.address);
     })
+
     it("Should fail for invalid item ids, sold items and when not enough ether is paid", async function () {
       // fails for invalid item ids
       await expect(
