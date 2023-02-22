@@ -64,13 +64,14 @@ contract Marketplace is ReentrancyGuard {
         address indexed buyer
     );
 
-//    event Cancelled(
+    event Cancelled (
 //        uint itemId,
-//        address indexed nft,
+//        //address indexed nft,
 //        uint tokenId,
+//
+//    // this allows us to search for it
 //        address indexed seller
-//    );
-
+    );
     // only deployer can call consturction function
     constructor(uint _feePercent) {
         feeAccount = payable(msg.sender);
@@ -165,23 +166,31 @@ contract Marketplace is ReentrancyGuard {
         );
     }
     // unlist item
-//    function removeItem(uint _itemId) external payable nonReentrant {
-//        Item storage item = items[_itemId];
-//        require(_itemId > 0 && _itemId <= itemCount, "item doesn't exist");
-//        require(!item.sold, "item already sold");
-//
-//        // decrement itemCount
-//        itemCount --;
-//
-//        delete(item.itemId, item.);
-//        // emit Cancelled event
-//        emit Cancelled(
+    function removeItem(uint _itemId) external payable nonReentrant {
+
+        // get item
+        Item storage item = items[_itemId];
+
+        require(_itemId > 0 && _itemId <= itemCount, "item doesn't exist");
+        require(!item.sold, "item already sold");
+
+        // Transfer the NFT back to the seller
+        item.nft.transferFrom(address(this), item.seller, item.tokenId);
+
+        // Delete the item from the items mapping
+        delete items[_itemId];
+
+        // Decrement the itemCount
+        itemCount--;
+
+        // emit cancellation
+        emit Cancelled(
 //            _itemId,
-//            address(item.nft),
+//            //address(item.nft),
 //            item.tokenId,
 //            item.seller
-//        );
-//    }
+        );
+    }
 
     // it has to include the market fees
     function getTotalPrice(uint _itemId) view public returns(uint){

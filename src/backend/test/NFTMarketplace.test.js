@@ -149,6 +149,7 @@ describe("NFTMarketplace", function () {
       // Seller should receive payment for the price of the NFT sold.
       expect(+fromWei(sellerFinalEthBal)).to.equal(+price + +fromWei(sellerInitalEthBal))
       // feeAccount should receive fee
+      //TODO: fix this. All tests for on their won, but balance gets confused when this and update exist.
       //expect(+fromWei(feeAccountFinalEthBal)).to.equal(+fee + +fromWei(feeAccountInitialEthBal))
       // The buyer should now own the nft
       expect(await nft.ownerOf(1)).to.equal(addr2.address);
@@ -237,4 +238,54 @@ describe("NFTMarketplace", function () {
     });
 
   });
+
+  describe("Deleting marketplace items", function () {
+    let price = 2
+    let fee = (feePercent/100)*price
+    let totalPriceInWei
+    beforeEach(async function () {
+      // addr1 mints an nft
+      await nft.connect(addr1).mint(URI)
+      // addr1 approves marketplace to spend tokens
+      await nft.connect(addr1).setApprovalForAll(marketplace.address, true)
+      // addr1 makes their nft a marketplace item.
+      await marketplace.connect(addr1).makeItem(nft.address, 1 , toWei(price))
+
+      // addr2 mints an nft
+      await nft.connect(addr2).mint(URI)
+
+      // addr2 approves marketplace to spend tokens
+      await nft.connect(addr2).setApprovalForAll(marketplace.address, true)
+      // addr2 makes their nft a marketplace item.
+      await marketplace.connect(addr2).makeItem(nft.address, 2 , toWei(price))
+    })
+
+    it("Should delete item, transfer NFT to seller, emit a Cancelled event", async function () {
+      // we delete item
+      await expect(marketplace.connect(addr1).removeItem(1))
+          .to.emit(marketplace, "Cancelled")
+          .withArgs(
+              // 1,
+              // nft.address,
+              // 0,
+              // addr1.address
+          )
+      // The seller should now own the nft
+      expect(await nft.ownerOf(1)).to.equal(addr1.address);
+      // Item count should now equal 1
+      expect(await marketplace.itemCount()).to.equal(1)
+    })
+
+    it("Should fail for sold items, and invalid item ids", async function () {
+      // fails for invalid item ids
+      await expect(
+          marketplace.connect(addr1).removeItem(3)
+      ).to.be.revertedWith("item doesn't exist");
+      await expect(
+          marketplace.connect(addr1).removeItem(0)
+      ).to.be.revertedWith("item doesn't exist");
+
+      // TODO:item already sold
+    });
+  })
 })
