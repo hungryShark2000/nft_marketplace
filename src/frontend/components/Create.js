@@ -44,7 +44,7 @@ const Create = ({ marketplace, nft }) => {
     await(await marketplace.makeItem(nft.address, id, listingPrice)).wait()
   }
   return (
-    <div className="container-fluid mt-5">
+    <div style={{ display: "inline-block", borderRadius: "10px", overflow: "hidden", backgroundColor: "#282828", color: "#FFFFFF", fontFamily: "Helvetica", fontSize: "16px", padding: "200px" }} className="container-fluid mt-5">
       <div className="row">
         <main role="main" className="col-lg-12 mx-auto" style={{ maxWidth: '1000px' }}>
           <div className="content mx-auto">
@@ -54,12 +54,17 @@ const Create = ({ marketplace, nft }) => {
                 required
                 name="file"
                 onChange={uploadToIPFS}
+                style={{ borderRadius: "10px", border: "2px solid #1DB954" }}
               />
-              <Form.Control onChange={(e) => setName(e.target.value)} size="lg" required type="text" placeholder="Name" />
-              <Form.Control onChange={(e) => setDescription(e.target.value)} size="lg" required as="textarea" placeholder="Description" />
-              <Form.Control onChange={(e) => setPrice(e.target.value)} size="lg" required type="number" placeholder="Price in ETH" />
-              <div className="d-grid px-0">
-                <Button onClick={createNFT} variant="primary" size="lg">
+              <Form.Control onChange={(e) => setName(e.target.value)} size="lg" required type="text" placeholder="Name" style={{ borderRadius: "10px", border: "2px solid #1DB954" }}/>
+              <Form.Control onChange={(e) => setDescription(e.target.value)} size="lg" required as="textarea" placeholder="Description" style={{ borderRadius: "10px", border: "2px solid #1DB954" }}/>
+              <Form.Control onChange={(e) => setPrice(e.target.value)} size="lg" required type="number" placeholder="Price in ETH" style={{ borderRadius: "10px", border: "2px solid #1DB954" }}/>
+              <div style={{ display: "inline-block", borderRadius: "10px", overflow: "hidden" }} className="d-grid px-0">
+                <Button
+                    className="btn btn-primary btn-lg rounded-pill px-5"
+                    style={{
+                      background: "#1DB954", border: "none", borderRadius: "10px", color: "white", fontFamily: "Helvetica", fontSize: "18px", fontWeight: "bold", padding: "12px 36px", textAlign: "center", textDecoration: "none", display: "inline-block", margin: "4px 2px", cursor: "pointer"
+                      }} onClick={createNFT} variant="primary" size="lg">
                   Create & List NFT!
                 </Button>
               </div>
