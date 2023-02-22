@@ -37,7 +37,7 @@ describe("NFTMarketplace", function () {
 
   describe("Deployment", function () {
 
-    it("Should track name and symbol of the nft collection contract", async function () {
+    it("Checks that our name is MusicMinty NFT and our collection contract symbol is MNTY", async function () {
       // This test expects the owner variable stored in the contract to be equal
       // to our Signer's owner.
       const nftName = "MusicMinty NFT"
@@ -46,7 +46,7 @@ describe("NFTMarketplace", function () {
       expect(await nft.symbol()).to.equal(nftSymbol);
     });
 
-    it("Should track feeAccount and feePercent of the marketplace contract", async function () {
+    it("Checks that feeAccount address is our and and feePercent of the marketplace contract is 1", async function () {
       expect(await marketplace.feeAccount()).to.equal(deployer.address);
       expect(await marketplace.feePercent()).to.equal(feePercent);
     });
@@ -54,7 +54,7 @@ describe("NFTMarketplace", function () {
 
   describe("Minting NFTs", function () {
 
-    it("Should track each minted NFT", async function () {
+    it("Checks we're minting correctly", async function () {
       // addr1 mints an nft
       await nft.connect(addr1).mint(URI)
       expect(await nft.tokenCount()).to.equal(1);
@@ -105,7 +105,7 @@ describe("NFTMarketplace", function () {
       expect(item.sold).to.equal(false)
     });
 
-    it("Should fail if price is set to zero", async function () {
+    it("Fails if price is set to zero", async function () {
       await expect(
         marketplace.connect(addr1).makeItem(nft.address, 1, 0)
       ).to.be.revertedWith("Price must be greater than zero");
@@ -126,7 +126,7 @@ describe("NFTMarketplace", function () {
       await marketplace.connect(addr1).makeItem(nft.address, 1 , toWei(price))
     })
 
-    it("Should update item as sold, pay seller, transfer NFT to buyer, charge fees and emit a Bought event", async function () {
+    it("Updates item as sold, pay seller, transfer NFT to buyer, charge fees and emit a Bought event", async function () {
       const sellerInitalEthBal = await addr1.getBalance()
       const feeAccountInitialEthBal = await deployer.getBalance()
       // fetch items total price (market fees + item price)
@@ -155,7 +155,7 @@ describe("NFTMarketplace", function () {
       expect(await nft.ownerOf(1)).to.equal(addr2.address);
     })
 
-    it("Should fail for invalid item ids, sold items and when not enough ether is paid", async function () {
+    it("Fails for invalid item ids, sold items and when not enough ether is paid", async function () {
       // fails for invalid item ids
       await expect(
         marketplace.connect(addr2).purchaseItem(2, {value: totalPriceInWei})
@@ -164,8 +164,6 @@ describe("NFTMarketplace", function () {
         marketplace.connect(addr2).purchaseItem(0, {value: totalPriceInWei})
       ).to.be.revertedWith("item doesn't exist");
       // Fails when not enough ether is paid with the transaction.
-      // In this instance, fails when buyer only sends enough ether to cover the price of the nft
-      // not the additional market fee.
       await expect(
         marketplace.connect(addr2).purchaseItem(1, {value: toWei(price)})
       ).to.be.revertedWith("not enough ether to cover item price and market fee");
@@ -192,7 +190,7 @@ describe("NFTMarketplace", function () {
     })
 
 
-    it("Should track newly created item, transfer NFT from seller to marketplace and emit Offered event", async function () {
+    it("Should track newly created item, update the nft price and emit Offered event", async function () {
       // addr1 offers their nft at a price of 1 ether
       await expect(marketplace.connect(addr1).makeItem(nft.address, 1 , toWei(price))) //toWei(price)
           .to.emit(marketplace, "Offered")
