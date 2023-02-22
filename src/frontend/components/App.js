@@ -31,6 +31,7 @@ function App() {
 
     // Get provider from Metamask
     const provider = new ethers.providers.Web3Provider(window.ethereum)
+
     // Set signer
     const signer = provider.getSigner()
 
@@ -45,6 +46,7 @@ function App() {
     loadContracts(signer)
   }
   const loadContracts = async (signer) => {
+
     // Get deployed copies of contracts
     const marketplace = new ethers.Contract(MarketplaceAddress.address, MarketplaceAbi.abi, signer)
     setMarketplace(marketplace)
