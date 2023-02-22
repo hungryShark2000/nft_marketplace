@@ -54,11 +54,11 @@ const Create = ({ marketplace, nft }) => {
                 required
                 name="file"
                 onChange={uploadToIPFS}
-                style={{ borderRadius: "10px", border: "2px solid #1DB954" }}
+                style={{ borderRadius: "20px", border: "2px solid #1DB954",}}
               />
-              <Form.Control onChange={(e) => setName(e.target.value)} size="lg" required type="text" placeholder="Name" style={{ borderRadius: "10px", border: "2px solid #1DB954" }}/>
-              <Form.Control onChange={(e) => setDescription(e.target.value)} size="lg" required as="textarea" placeholder="Description" style={{ borderRadius: "10px", border: "2px solid #1DB954" }}/>
-              <Form.Control onChange={(e) => setPrice(e.target.value)} size="lg" required type="number" placeholder="Price in ETH" style={{ borderRadius: "10px", border: "2px solid #1DB954" }}/>
+              <Form.Control onChange={(e) => setName(e.target.value)} size="lg" required type="text" placeholder="Name" style={{ borderRadius: "20px", border: "2px solid #1DB954" }}/>
+              <Form.Control onChange={(e) => setDescription(e.target.value)} size="lg" required as="textarea" placeholder="Description" style={{ borderRadius: "20px", border: "2px solid #1DB954" }}/>
+              <Form.Control onChange={(e) => setPrice(e.target.value)} size="lg" required type="number" placeholder="Price in ETH" style={{ borderRadius: "20px", border: "2px solid #1DB954" }}/>
               <div style={{ display: "inline-block", borderRadius: "10px", overflow: "hidden" }} className="d-grid px-0">
                 <Button
                     className="btn btn-primary btn-lg rounded-pill px-5"
