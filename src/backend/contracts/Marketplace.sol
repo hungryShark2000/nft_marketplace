@@ -64,6 +64,13 @@ contract Marketplace is ReentrancyGuard {
         address indexed buyer
     );
 
+//    event Cancelled(
+//        uint itemId,
+//        address indexed nft,
+//        uint tokenId,
+//        address indexed seller
+//    );
+
     // only deployer can call consturction function
     constructor(uint _feePercent) {
         feeAccount = payable(msg.sender);
@@ -77,6 +84,8 @@ contract Marketplace is ReentrancyGuard {
         //make sure input price isn't zero
         //TODO: we may need to change this if an artist is offering an nft for free, like the early release tix
         require(_price > 0, "Price must be greater than zero");
+
+        //require(_price < 10, "Price must be reasonable");
 
         // increment itemCount
         itemCount ++;
@@ -133,8 +142,51 @@ contract Marketplace is ReentrancyGuard {
         );
     }
 
+    // update item
+    function updateItem(uint _itemId, uint _new_price) external payable nonReentrant{
+
+        //check that price is greater than zero
+        //TODO: check that different
+        require(_new_price > 0, "New price must be greater than zero");
+
+        // get item
+        Item storage item = items[_itemId];
+
+        // get new price
+        item.price = _new_price;
+
+        // emit event with new price
+        emit Offered(
+            _itemId,
+            address(item.nft),
+            item.tokenId,
+            _new_price,
+            msg.sender
+        );
+    }
+    // unlist item
+//    function removeItem(uint _itemId) external payable nonReentrant {
+//        Item storage item = items[_itemId];
+//        require(_itemId > 0 && _itemId <= itemCount, "item doesn't exist");
+//        require(!item.sold, "item already sold");
+//
+//        // decrement itemCount
+//        itemCount --;
+//
+//        delete(item.itemId, item.);
+//        // emit Cancelled event
+//        emit Cancelled(
+//            _itemId,
+//            address(item.nft),
+//            item.tokenId,
+//            item.seller
+//        );
+//    }
+
     // it has to include the market fees
     function getTotalPrice(uint _itemId) view public returns(uint){
         return((items[_itemId].price*(100 + feePercent))/100);
     }
+
+
 }
